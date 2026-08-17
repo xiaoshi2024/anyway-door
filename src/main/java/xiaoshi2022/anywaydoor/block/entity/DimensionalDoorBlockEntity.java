@@ -40,6 +40,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private static final String TAG_TARGET_DOOR_X = "target_door_x";
 	private static final String TAG_TARGET_DOOR_Y = "target_door_y";
 	private static final String TAG_TARGET_DOOR_Z = "target_door_z";
+	private static final String TAG_TARGET_SET = "target_set";  // 新增：标记目标是否已设置
 
 	private static final RawAnimation DOOR_OPEN = RawAnimation.begin().thenPlayAndHold("door_open");
 	private static final RawAnimation DOOR_CLOSE = RawAnimation.begin().thenPlayAndHold("door_close");
@@ -50,6 +51,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	private boolean open = false;
+	private boolean targetSet = false;  // 新增：目标是否已设置
 	private ResourceKey<Level> targetDimension = Level.OVERWORLD;
 	private int targetX = 0;
 	private int targetY = 64;
@@ -63,36 +65,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		super(ModBlockEntities.DIMENSIONAL_DOOR, pos, state);
 		AnywayDoor.registerDoor(this);
 		this.open = false;
-
-		// ========== 生成随机目标 ==========
-		generateRandomTarget();
-	}
-
-	// ========== 生成随机目标 ==========
-	private void generateRandomTarget() {
-		Random random = new Random();
-
-		// 随机范围：-1000 到 1000
-		int range = 1000;
-		this.targetX = random.nextInt(range * 2) - range;
-		this.targetZ = random.nextInt(range * 2) - range;
-		this.targetY = 64 + random.nextInt(32); // 64 ~ 96
-
-		// 10% 概率传送到下界
-		if (random.nextDouble() < 0.1) {
-			this.targetDimension = Level.NETHER;
-			this.targetX = random.nextInt(200) - 100;
-			this.targetZ = random.nextInt(200) - 100;
-			this.targetY = 40 + random.nextInt(50); // 下界安全高度
-		}
-
-		// 5% 概率传送到末地
-		if (random.nextDouble() < 0.05) {
-			this.targetDimension = Level.END;
-			this.targetX = random.nextInt(200) - 100;
-			this.targetZ = random.nextInt(200) - 100;
-			this.targetY = 50 + random.nextInt(30);
-		}
+		this.targetSet = false;  // 默认未设置目标
 	}
 
 	@Override
@@ -128,6 +101,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	}
 
 	public boolean isOpen() { return this.open; }
+	public boolean isTargetSet() { return this.targetSet; }
 
 	public void setOpen(boolean open) {
 		this.open = open;
@@ -143,6 +117,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
+		this.targetSet = true;  // 标记目标已设置
 		this.setChanged();
 	}
 
@@ -257,6 +232,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		tag.putBoolean(TAG_OPEN, this.open);
+		tag.putBoolean(TAG_TARGET_SET, this.targetSet);  // 新增
 		tag.putString(TAG_TARGET_DIMENSION, this.targetDimension.location().toString());
 		tag.putInt(TAG_TARGET_X, this.targetX);
 		tag.putInt(TAG_TARGET_Y, this.targetY);
@@ -275,6 +251,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		this.open = tag.getBoolean(TAG_OPEN);
+		this.targetSet = tag.getBoolean(TAG_TARGET_SET);  // 新增
 
 		String dimName = tag.getString(TAG_TARGET_DIMENSION);
 		if (!dimName.isEmpty()) {
@@ -282,18 +259,11 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 					net.minecraft.core.registries.Registries.DIMENSION,
 					ResourceLocation.tryParse(dimName)
 			);
-		} else {
-			// 如果 NBT 没有维度信息，生成随机目标
-			generateRandomTarget();
 		}
 
-		// 只有当 NBT 有坐标时才读取，否则保持随机生成的值
-		if (tag.contains(TAG_TARGET_X)) {
-			this.targetX = tag.getInt(TAG_TARGET_X);
-			this.targetY = tag.getInt(TAG_TARGET_Y);
-			this.targetZ = tag.getInt(TAG_TARGET_Z);
-		}
-
+		this.targetX = tag.getInt(TAG_TARGET_X);
+		this.targetY = tag.getInt(TAG_TARGET_Y);
+		this.targetZ = tag.getInt(TAG_TARGET_Z);
 		this.portalEntityId = tag.getInt(TAG_PORTAL_ID);
 
 		if (tag.contains(TAG_TARGET_DOOR_DIMENSION) && tag.contains(TAG_TARGET_DOOR_X)) {
