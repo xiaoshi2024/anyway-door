@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "anyway-door",
+	"version": "${version}",
+	"name": "Anyway Door",
+	"description": "This is a work targeted at Doraemon fans.",
+	"authors": [
+		"(UFO噬x)xiaoshi2022!"
+	],
+	"contact": {
+		"homepage": "https://space.bilibili.com/1410016591"
+	},
+	"license": "MIT",
+	"icon": "assets/anyway-door/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"xiaoshi2022.anywaydoor.AnywayDoor"
+		],
+		"client": [
+			"xiaoshi2022.anywaydoor.client.AnywayDoorClient"
+		],
+		"fabric-datagen": [
+			"xiaoshi2022.anywaydoor.datagen.AnywayDoorDataGenerator"
+		]
+	},
+	"mixins": [
+		"anyway-door.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
