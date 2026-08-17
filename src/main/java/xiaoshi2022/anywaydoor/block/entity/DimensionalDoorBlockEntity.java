@@ -63,13 +63,42 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		super(ModBlockEntities.DIMENSIONAL_DOOR, pos, state);
 		AnywayDoor.registerDoor(this);
 		this.open = false;
+
+		// ========== 生成随机目标 ==========
+		generateRandomTarget();
+	}
+
+	// ========== 生成随机目标 ==========
+	private void generateRandomTarget() {
+		Random random = new Random();
+
+		// 随机范围：-1000 到 1000
+		int range = 1000;
+		this.targetX = random.nextInt(range * 2) - range;
+		this.targetZ = random.nextInt(range * 2) - range;
+		this.targetY = 64 + random.nextInt(32); // 64 ~ 96
+
+		// 10% 概率传送到下界
+		if (random.nextDouble() < 0.1) {
+			this.targetDimension = Level.NETHER;
+			this.targetX = random.nextInt(200) - 100;
+			this.targetZ = random.nextInt(200) - 100;
+			this.targetY = 40 + random.nextInt(50); // 下界安全高度
+		}
+
+		// 5% 概率传送到末地
+		if (random.nextDouble() < 0.05) {
+			this.targetDimension = Level.END;
+			this.targetX = random.nextInt(200) - 100;
+			this.targetZ = random.nextInt(200) - 100;
+			this.targetY = 50 + random.nextInt(30);
+		}
 	}
 
 	@Override
 	public void setRemoved() {
 		super.setRemoved();
 		AnywayDoor.unregisterDoor(this);
-		// ========== 关键修复：移除时强制清理目标门 ==========
 		cleanupTargetDoor();
 		cleanupPortal();
 	}
@@ -144,9 +173,6 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		this.setChanged();
 	}
 
-	/**
-	 * 清理目标位置的任意门方块和传送门
-	 */
 	public void cleanupTargetDoor() {
 		if (targetDoorPos != null && targetDoorDimension != null) {
 			ServerLevel targetLevel = null;
@@ -155,15 +181,11 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 			}
 
 			if (targetLevel != null) {
-				// 获取目标位置的方块实体
 				BlockEntity targetBE = targetLevel.getBlockEntity(targetDoorPos);
 				if (targetBE instanceof DimensionalDoorBlockEntity targetDoor) {
-					// 清理目标门的传送门
 					targetDoor.cleanupPortal();
-					// 关闭目标门
 					targetDoor.setOpen(false);
 				}
-				// 移除目标门方块
 				targetLevel.removeBlock(targetDoorPos, false);
 			}
 
@@ -260,11 +282,18 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 					net.minecraft.core.registries.Registries.DIMENSION,
 					ResourceLocation.tryParse(dimName)
 			);
+		} else {
+			// 如果 NBT 没有维度信息，生成随机目标
+			generateRandomTarget();
 		}
 
-		this.targetX = tag.getInt(TAG_TARGET_X);
-		this.targetY = tag.getInt(TAG_TARGET_Y);
-		this.targetZ = tag.getInt(TAG_TARGET_Z);
+		// 只有当 NBT 有坐标时才读取，否则保持随机生成的值
+		if (tag.contains(TAG_TARGET_X)) {
+			this.targetX = tag.getInt(TAG_TARGET_X);
+			this.targetY = tag.getInt(TAG_TARGET_Y);
+			this.targetZ = tag.getInt(TAG_TARGET_Z);
+		}
+
 		this.portalEntityId = tag.getInt(TAG_PORTAL_ID);
 
 		if (tag.contains(TAG_TARGET_DOOR_DIMENSION) && tag.contains(TAG_TARGET_DOOR_X)) {
