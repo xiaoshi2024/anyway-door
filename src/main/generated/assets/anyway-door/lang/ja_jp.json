@@ -1,3 +1,40 @@
 {
-  "block.anyway-door.dimensional_door": "どこでもドア"
+  "block.anyway-door.dimensional_door": "どこでもドア",
+
+  "command.rym.set.usage": "§c✦ 最初に /rym set で目的地を設定してください！",
+  "command.rym.already_open": "§e✦ どこでもドアはもう開いています",
+  "command.rym.dimension_not_found": "§c✦ 対象ディメンションが存在しません: %s",
+  "command.rym.target_set": "§a✦ 対象位置にリターンドアを作成しました",
+  "command.rym.target_occupied": "§c✦ 対象位置は %s で占有されています。リターンドアを作成できません",
+  "command.rym.door_opened": "§a✦ どこでもドアを開きました → §b%s §a(§b%d, %d, %d§a) §eくぐってテレポート",
+  "command.rym.nearby_opened": "§7✦ 近くのどこでもドアが開かれました",
+
+  "command.rym.door_closed": "§a✦ どこでもドアを閉じました",
+  "command.rym.already_closed": "§e✦ どこでもドアはもう閉じています",
+  "command.rym.nearby_closed": "§7✦ 近くのどこでもドアが閉じられました",
+
+  "command.rym.teleport_success": "§a✦ テレポート成功！",
+  "command.rym.door_closed_for_teleport": "§c✦ どこでもドアは閉じています",
+  "command.rym.wrong_side": "§c✦ ドアの正面から入ってください！",
+
+  "command.rym.no_door_looking": "§cどこでもドアを見ていません",
+  "command.rym.invalid_dimension": "§c無効なディメンション名: %s",
+  "command.rym.dimension_not_exist": "§cディメンションが存在しません: %s",
+  "command.rym.target_set_success": "§a✓ ターゲットを §b%s §a(§b%d, %d, %d§a) に設定しました",
+
+  "command.rym.player_not_found": "§cプレイヤー %s はオンラインではないか、存在しません",
+  "command.rym.player_no_safe_pos": "§cプレイヤー %s の近くに安全な位置が見つかりません",
+  "command.rym.player_target_set": "§a✓ ターゲットを §b%s §aの近く §b%s §a(§b%d, %d, %d§a) に設定しました",
+  "command.rym.door_reopen_warning": "§e⚠ ドアが開いています。ターゲットを更新するには閉じてから再度開けてください",
+
+  "command.rym.structure_not_found": "§c構造物が見つかりません: %s (検索半径 %d チャンク)",
+  "command.rym.structure_invalid": "§c無効な構造物名: %s",
+  "command.rym.structure_not_exist": "§c構造物が存在しません: %s",
+  "command.rym.structure_no_safe_pos": "§c構造物 %s の近くに安全な位置が見つかりません",
+  "command.rym.structure_located": "§a✓ 構造物 §b%s §aを発見 距離 §e%s §a位置 §b%d, %d, %d",
+  "command.rym.structure_error": "§c構造物の検索中にエラーが発生しました: %s",
+
+  "command.rym.list_structures_title": "§6=== 利用可能な構造物 (%d個) ===\n",
+  "command.rym.list_structures_empty": "§c構造物が見つかりません",
+  "command.rym.list_structures_continue": "§7続きを見るには /rym list_structures <ページ> を入力"
 }

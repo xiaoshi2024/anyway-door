@@ -1,3 +1,40 @@
 {
-  "block.anyway-door.dimensional_door": "Dimensional Door"
+  "block.anyway-door.dimensional_door": "Dimensional Door",
+
+  "command.rym.set.usage": "§c✦ Please use /rym set to set the target location first!",
+  "command.rym.already_open": "§e✦ The Dimensional Door is already open",
+  "command.rym.dimension_not_found": "§c✦ Target dimension does not exist: %s",
+  "command.rym.target_set": "§a✦ Return door created at target location",
+  "command.rym.target_occupied": "§c✦ Target location is occupied by %s, cannot create return door",
+  "command.rym.door_opened": "§a✦ Dimensional Door opened → §b%s §a(§b%d, %d, %d§a) §eWalk through to teleport",
+  "command.rym.nearby_opened": "§7✦ A nearby Dimensional Door was opened",
+
+  "command.rym.door_closed": "§a✦ Dimensional Door closed",
+  "command.rym.already_closed": "§e✦ The Dimensional Door is already closed",
+  "command.rym.nearby_closed": "§7✦ A nearby Dimensional Door was closed",
+
+  "command.rym.teleport_success": "§a✦ Teleport successful!",
+  "command.rym.door_closed_for_teleport": "§c✦ The Dimensional Door is closed",
+  "command.rym.wrong_side": "§c✦ Please enter from the front of the door!",
+
+  "command.rym.no_door_looking": "§cYou are not looking at a Dimensional Door",
+  "command.rym.invalid_dimension": "§cInvalid dimension name: %s",
+  "command.rym.dimension_not_exist": "§cDimension does not exist: %s",
+  "command.rym.target_set_success": "§a✓ Target set to §b%s §a(§b%d, %d, %d§a)",
+
+  "command.rym.player_not_found": "§cPlayer %s is not online or does not exist",
+  "command.rym.player_no_safe_pos": "§cCannot find a safe position near player %s",
+  "command.rym.player_target_set": "§a✓ Target set to §b%s §anearby §b%s §a(§b%d, %d, %d§a)",
+  "command.rym.door_reopen_warning": "§e⚠ Door is open, please close and reopen to update target",
+
+  "command.rym.structure_not_found": "§cStructure not found: %s (search radius %d chunks)",
+  "command.rym.structure_invalid": "§cInvalid structure name: %s",
+  "command.rym.structure_not_exist": "§cStructure does not exist: %s",
+  "command.rym.structure_no_safe_pos": "§cCannot find a safe position near structure: %s",
+  "command.rym.structure_located": "§a✓ Located §b%s §aDistance §e%s §aPosition §b%d, %d, %d",
+  "command.rym.structure_error": "§cError locating structure: %s",
+
+  "command.rym.list_structures_title": "§6=== Available Structures (%d) ===\n",
+  "command.rym.list_structures_empty": "§cNo structures found",
+  "command.rym.list_structures_continue": "§7Type /rym list_structures <page> to see more"
 }

@@ -108,7 +108,15 @@ public class DimensionalDoorBlock extends Block implements EntityBlock {
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
 		if (!level.isClientSide && !state.is(newState.getBlock())) {
 			if (level.getBlockEntity(pos) instanceof DimensionalDoorBlockEntity door) {
-				door.cleanupAllPortals();
+				// ========== 如果是反向门，清理父门关联 ==========
+				if (door.isReverseDoor()) {
+					// 清理父门关联已经在 setRemoved 中处理了
+					// 但这里额外调用一次确保清理
+					door.cleanupAllPortals();
+				} else {
+					// 普通门：清理所有关联
+					door.cleanupAllPortals();
+				}
 			}
 		}
 		super.onRemove(state, level, pos, newState, movedByPiston);
@@ -148,7 +156,6 @@ public class DimensionalDoorBlock extends Block implements EntityBlock {
 		return shape;
 	}
 
-	// ========== 根据朝向旋转坐标 ==========
 	// ========== 根据朝向旋转坐标 ==========
 	private static VoxelShape box(double x1, double y1, double z1, double x2, double y2, double z2, Direction facing) {
 		return switch (facing) {

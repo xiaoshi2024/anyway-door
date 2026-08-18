@@ -40,7 +40,10 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private static final String TAG_TARGET_DOOR_X = "target_door_x";
 	private static final String TAG_TARGET_DOOR_Y = "target_door_y";
 	private static final String TAG_TARGET_DOOR_Z = "target_door_z";
-	private static final String TAG_TARGET_SET = "target_set";  // 新增：标记目标是否已设置
+	private static final String TAG_TARGET_SET = "target_set";
+	private static final String TAG_IS_REVERSE_DOOR = "is_reverse_door";  // 新增：标记是否为反向门
+	private static final String TAG_PARENT_DOOR_POS = "parent_door_pos";  // 新增：父门位置
+	private static final String TAG_PARENT_DOOR_DIMENSION = "parent_door_dimension";  // 新增：父门维度
 
 	private static final RawAnimation DOOR_OPEN = RawAnimation.begin().thenPlayAndHold("door_open");
 	private static final RawAnimation DOOR_CLOSE = RawAnimation.begin().thenPlayAndHold("door_close");
@@ -51,7 +54,8 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	private boolean open = false;
-	private boolean targetSet = false;  // 新增：目标是否已设置
+	private boolean targetSet = false;
+	private boolean isReverseDoor = false;  // 新增：是否为反向门
 	private ResourceKey<Level> targetDimension = Level.OVERWORLD;
 	private int targetX = 0;
 	private int targetY = 64;
@@ -61,19 +65,53 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private ResourceKey<Level> targetDoorDimension = null;
 	private BlockPos targetDoorPos = null;
 
+	// 新增：父门信息（用于反向门）
+	private ResourceKey<Level> parentDoorDimension = null;
+	private BlockPos parentDoorPos = null;
+
 	public DimensionalDoorBlockEntity(BlockPos pos, BlockState state) {
 		super(ModBlockEntities.DIMENSIONAL_DOOR, pos, state);
 		AnywayDoor.registerDoor(this);
 		this.open = false;
-		this.targetSet = false;  // 默认未设置目标
+		this.targetSet = false;
+		this.isReverseDoor = false;
 	}
 
 	@Override
 	public void setRemoved() {
 		super.setRemoved();
 		AnywayDoor.unregisterDoor(this);
+
+		// ========== 如果是反向门，清理父门关联 ==========
+		if (isReverseDoor && parentDoorPos != null && parentDoorDimension != null) {
+			cleanupParentDoorAssociation();
+		}
+
 		cleanupTargetDoor();
 		cleanupPortal();
+	}
+
+	// ========== 新增：清理父门关联 ==========
+	private void cleanupParentDoorAssociation() {
+		if (level == null || level.getServer() == null) return;
+
+		ServerLevel parentLevel = level.getServer().getLevel(parentDoorDimension);
+		if (parentLevel == null) return;
+
+		BlockEntity parentBE = parentLevel.getBlockEntity(parentDoorPos);
+		if (parentBE instanceof DimensionalDoorBlockEntity parentDoor) {
+			// 清除父门对目标门的引用
+			parentDoor.targetDoorPos = null;
+			parentDoor.targetDoorDimension = null;
+			parentDoor.setChanged();
+
+			// 如果父门的传送门还在，清理它
+			parentDoor.cleanupPortal();
+			parentDoor.setOpen(false);
+		}
+
+		parentDoorPos = null;
+		parentDoorDimension = null;
 	}
 
 	@Override
@@ -102,6 +140,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 
 	public boolean isOpen() { return this.open; }
 	public boolean isTargetSet() { return this.targetSet; }
+	public boolean isReverseDoor() { return this.isReverseDoor; }  // 新增
 
 	public void setOpen(boolean open) {
 		this.open = open;
@@ -117,7 +156,7 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
-		this.targetSet = true;  // 标记目标已设置
+		this.targetSet = true;
 		this.setChanged();
 	}
 
@@ -169,6 +208,17 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 			this.setChanged();
 		}
 	}
+
+	// ==================== 新增：反向门设置方法 ====================
+	public void setAsReverseDoor(BlockPos parentPos, ResourceKey<Level> parentDim) {
+		this.isReverseDoor = true;
+		this.parentDoorPos = parentPos;
+		this.parentDoorDimension = parentDim;
+		this.setChanged();
+	}
+
+	public BlockPos getParentDoorPos() { return this.parentDoorPos; }
+	public ResourceKey<Level> getParentDoorDimension() { return this.parentDoorDimension; }
 
 	// ==================== 传送门管理 ====================
 
@@ -232,7 +282,8 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		tag.putBoolean(TAG_OPEN, this.open);
-		tag.putBoolean(TAG_TARGET_SET, this.targetSet);  // 新增
+		tag.putBoolean(TAG_TARGET_SET, this.targetSet);
+		tag.putBoolean(TAG_IS_REVERSE_DOOR, this.isReverseDoor);  // 新增
 		tag.putString(TAG_TARGET_DIMENSION, this.targetDimension.location().toString());
 		tag.putInt(TAG_TARGET_X, this.targetX);
 		tag.putInt(TAG_TARGET_Y, this.targetY);
@@ -245,13 +296,22 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 			tag.putInt(TAG_TARGET_DOOR_Y, targetDoorPos.getY());
 			tag.putInt(TAG_TARGET_DOOR_Z, targetDoorPos.getZ());
 		}
+
+		// 新增：保存父门信息
+		if (parentDoorPos != null && parentDoorDimension != null) {
+			tag.putString(TAG_PARENT_DOOR_DIMENSION, parentDoorDimension.location().toString());
+			tag.putInt(TAG_PARENT_DOOR_POS + "_X", parentDoorPos.getX());
+			tag.putInt(TAG_PARENT_DOOR_POS + "_Y", parentDoorPos.getY());
+			tag.putInt(TAG_PARENT_DOOR_POS + "_Z", parentDoorPos.getZ());
+		}
 	}
 
 	@Override
 	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		this.open = tag.getBoolean(TAG_OPEN);
-		this.targetSet = tag.getBoolean(TAG_TARGET_SET);  // 新增
+		this.targetSet = tag.getBoolean(TAG_TARGET_SET);
+		this.isReverseDoor = tag.getBoolean(TAG_IS_REVERSE_DOOR);  // 新增
 
 		String dimName = tag.getString(TAG_TARGET_DIMENSION);
 		if (!dimName.isEmpty()) {
@@ -279,6 +339,20 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 						tag.getInt(TAG_TARGET_DOOR_Z)
 				);
 			}
+		}
+
+		// 新增：加载父门信息
+		String parentDimName = tag.getString(TAG_PARENT_DOOR_DIMENSION);
+		if (!parentDimName.isEmpty() && tag.contains(TAG_PARENT_DOOR_POS + "_X")) {
+			this.parentDoorDimension = ResourceKey.create(
+					net.minecraft.core.registries.Registries.DIMENSION,
+					ResourceLocation.tryParse(parentDimName)
+			);
+			this.parentDoorPos = new BlockPos(
+					tag.getInt(TAG_PARENT_DOOR_POS + "_X"),
+					tag.getInt(TAG_PARENT_DOOR_POS + "_Y"),
+					tag.getInt(TAG_PARENT_DOOR_POS + "_Z")
+			);
 		}
 	}
 

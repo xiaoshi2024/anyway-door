@@ -1,3 +1,40 @@
 {
-  "block.anyway-door.dimensional_door": "任意门"
+  "block.anyway-door.dimensional_door": "任意门",
+
+  "command.rym.set.usage": "§c✦ 请先使用 /rym set 设置目标地点！",
+  "command.rym.already_open": "§e✦ 任意门已经打开了",
+  "command.rym.dimension_not_found": "§c✦ 目标维度不存在: %s",
+  "command.rym.target_set": "§a✦ 目标位置已生成返回门",
+  "command.rym.target_occupied": "§c✦ 目标位置被 %s 占用，无法生成返回门",
+  "command.rym.door_opened": "§a✦ 任意门已开启 → §b%s §a(§b%d, %d, %d§a) §e走进门传送",
+  "command.rym.nearby_opened": "§7✦ 附近一扇任意门被打开了",
+
+  "command.rym.door_closed": "§a✦ 已关闭任意门",
+  "command.rym.already_closed": "§e✦ 任意门已经关闭了",
+  "command.rym.nearby_closed": "§7✦ 附近一扇任意门被关闭了",
+
+  "command.rym.teleport_success": "§a✦ 传送成功！",
+  "command.rym.door_closed_for_teleport": "§c✦ 任意门已经关闭了",
+  "command.rym.wrong_side": "§c✦ 请从门的正面进入！",
+
+  "command.rym.no_door_looking": "§c没有正在注视任意门",
+  "command.rym.invalid_dimension": "§c无效的维度名称: %s",
+  "command.rym.dimension_not_exist": "§c维度不存在: %s",
+  "command.rym.target_set_success": "§a✓ 目标已设置为 §b%s §a(§b%d, %d, %d§a)",
+
+  "command.rym.player_not_found": "§c玩家 %s 不在线或不存在",
+  "command.rym.player_no_safe_pos": "§c无法在玩家 %s 附近找到安全位置",
+  "command.rym.player_target_set": "§a✓ 目标已设置为 §b%s §a附近位置 §b%s §a(§b%d, %d, %d§a)",
+  "command.rym.door_reopen_warning": "§e⚠ 门已开启，请关闭后重新打开以更新目标",
+
+  "command.rym.structure_not_found": "§c未找到结构: %s (搜索半径 %d 区块)",
+  "command.rym.structure_invalid": "§c无效的结构名称: %s",
+  "command.rym.structure_not_exist": "§c结构不存在: %s",
+  "command.rym.structure_no_safe_pos": "§c无法在结构附近找到安全位置: %s",
+  "command.rym.structure_located": "§a✓ 已定位到 §b%s §a距离 §e%s §a位置 §b%d, %d, %d",
+  "command.rym.structure_error": "§c定位结构时发生错误: %s",
+
+  "command.rym.list_structures_title": "§6=== 可用结构列表 (%d个) ===\n",
+  "command.rym.list_structures_empty": "§c没有找到任何结构",
+  "command.rym.list_structures_continue": "§7输入 /rym list_structures <页码> 查看更多"
 }

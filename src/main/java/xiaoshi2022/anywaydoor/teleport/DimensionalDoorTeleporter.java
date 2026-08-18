@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.api.PortalAPI;
 import qouteall.imm_ptl.core.portal.Portal;
 import xiaoshi2022.anywaydoor.block.DimensionalDoorBlock;
@@ -24,27 +25,17 @@ public final class DimensionalDoorTeleporter {
 
 	// ========== 获取门板中心位置（根据朝向） ==========
 	private static Vec3 getDoorCenter(BlockPos pos, Direction facing) {
-		// door2 的 pivot 在 (8, 19, -7)，门板中心在 (0, 19, -7) 相对方块原点
-		// 根据朝向旋转偏移
 		double offsetX = 0;
-		double offsetZ = -7.0 / 16.0;  // 默认朝北，门板在 Z 负方向
+		double offsetZ = -7.0 / 16.0;
 
-		// 根据朝向旋转偏移
 		switch (facing) {
-			case NORTH -> {
-				// 不变: (0, 0, -7)
-			}
-			case SOUTH -> {
-				// 绕 Y 旋转 180°: (0, 0, 7)
-				offsetZ = 7.0 / 16.0;
-			}
+			case NORTH -> {}
+			case SOUTH -> offsetZ = 7.0 / 16.0;
 			case EAST -> {
-				// 绕 Y 旋转 90°: (7, 0, 0)
 				offsetX = 7.0 / 16.0;
 				offsetZ = 0;
 			}
 			case WEST -> {
-				// 绕 Y 旋转 -90°: (-7, 0, 0)
 				offsetX = -7.0 / 16.0;
 				offsetZ = 0;
 			}
@@ -69,15 +60,25 @@ public final class DimensionalDoorTeleporter {
 		};
 	}
 
+	// ========== 获取门的法线方向（正面朝向） ==========
+	private static Vec3 getNormal(Direction facing) {
+		return switch (facing) {
+			case NORTH -> new Vec3(0, 0, -1);
+			case SOUTH -> new Vec3(0, 0, 1);
+			case EAST -> new Vec3(1, 0, 0);
+			case WEST -> new Vec3(-1, 0, 0);
+			default -> new Vec3(0, 0, -1);
+		};
+	}
+
 	public static boolean openDoor(Level level, BlockPos pos, ServerPlayer player) {
 		if (!(level.getBlockEntity(pos) instanceof DimensionalDoorBlockEntity door)) {
 			return false;
 		}
 
-		// ========== 检查目标是否已设置 ==========
 		if (!door.isTargetSet()) {
 			player.displayClientMessage(
-					Component.literal("§c✦ 请先使用 /rym set 设置目标地点！"),
+					Component.translatable("command.rym.set.usage"),
 					true
 			);
 			return false;
@@ -85,15 +86,13 @@ public final class DimensionalDoorTeleporter {
 
 		if (door.isOpen()) {
 			player.displayClientMessage(
-					Component.literal("§e✦ 任意门已经打开了"),
+					Component.translatable("command.rym.already_open"),
 					true
 			);
 			return false;
 		}
 
 		door.setOpen(true);
-
-		// ========== 播放开门音效 ==========
 		level.playSound(null, pos, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
 
 		double tx = door.getTargetX() + 0.5;
@@ -108,7 +107,7 @@ public final class DimensionalDoorTeleporter {
 		ServerLevel targetLevel = serverLevel.getServer().getLevel(targetDim);
 		if (targetLevel == null) {
 			player.displayClientMessage(
-					Component.literal("§c✦ 目标维度不存在: " + targetDim.location()),
+					Component.translatable("command.rym.dimension_not_found", targetDim.location()),
 					true
 			);
 			door.setOpen(false);
@@ -136,14 +135,13 @@ public final class DimensionalDoorTeleporter {
 			if (targetLevel.getBlockEntity(targetPos) instanceof DimensionalDoorBlockEntity targetDoor) {
 				targetDoorCreated = true;
 
-				// 设置目标门的传送目标为当前门的位置
+				targetDoor.setAsReverseDoor(pos, serverLevel.dimension());
 				targetDoor.setTarget(serverLevel.dimension(), pos.getX(), pos.getY(), pos.getZ());
 				targetDoor.setOpen(true);
 
 				Direction targetDoorFacing = targetLevel.getBlockState(targetPos).getValue(DimensionalDoorBlock.FACING);
 				Vec3 targetAxisW = getAxisW(targetDoorFacing);
 
-				// 反向传送门位置
 				Vec3 targetOrigin = getDoorCenter(targetPos, targetDoorFacing);
 
 				Portal reversePortal = new Portal(Portal.ENTITY_TYPE, targetLevel);
@@ -157,21 +155,23 @@ public final class DimensionalDoorTeleporter {
 				reversePortal.setTeleportable(true);
 				reversePortal.setInteractable(true);
 				reversePortal.setIsVisible(true);
+				reversePortal.specificPlayerId = null;
 
 				PortalAPI.spawnServerEntity(reversePortal);
-				targetDoor.setPortalEntity(reversePortal);
+				McHelper.resendSpawnPacketToTrackers(reversePortal);
 
+				targetDoor.setPortalEntity(reversePortal);
 				door.setTargetDoorPos(targetPos, targetDim);
 
 				player.displayClientMessage(
-						Component.literal("§a✦ 目标位置已生成返回门"),
+						Component.translatable("command.rym.target_set"),
 						true
 				);
 			}
 		} else {
 			String blockName = targetBlockState.getBlock().getName().getString();
 			player.displayClientMessage(
-					Component.literal("§c✦ 目标位置被 " + blockName + " 占用，无法生成返回门"),
+					Component.translatable("command.rym.target_occupied", blockName),
 					true
 			);
 		}
@@ -183,7 +183,6 @@ public final class DimensionalDoorTeleporter {
 		forwardPortal.setOriginPos(origin);
 		forwardPortal.setDestinationDimension(targetLevel.dimension());
 
-		// 如果生成了反向门，传送到反向门表面；否则传送到目标坐标
 		if (targetDoorCreated) {
 			Direction targetFacing = facing.getOpposite();
 			forwardPortal.setDestination(getDoorCenter(targetPos, targetFacing));
@@ -198,8 +197,11 @@ public final class DimensionalDoorTeleporter {
 		forwardPortal.setTeleportable(true);
 		forwardPortal.setInteractable(true);
 		forwardPortal.setIsVisible(true);
+		forwardPortal.specificPlayerId = null;
 
 		PortalAPI.spawnServerEntity(forwardPortal);
+		McHelper.resendSpawnPacketToTrackers(forwardPortal);
+
 		door.setPortalEntity(forwardPortal);
 
 		// ========== 显示提示信息 ==========
@@ -211,7 +213,7 @@ public final class DimensionalDoorTeleporter {
 		level.players().forEach(p -> {
 			if (p != player && p.distanceToSqr(Vec3.atCenterOf(pos)) < 100) {
 				p.displayClientMessage(
-						Component.literal("§7✦ 附近一扇任意门被打开了"),
+						Component.translatable("command.rym.nearby_opened"),
 						true
 				);
 			}
@@ -227,31 +229,27 @@ public final class DimensionalDoorTeleporter {
 
 		if (!door.isOpen()) {
 			player.displayClientMessage(
-					Component.literal("§e✦ 任意门已经关闭了"),
+					Component.translatable("command.rym.already_closed"),
 					true
 			);
 			return false;
 		}
 
-		// 清理当前门的传送门
 		door.cleanupPortal();
 		door.setOpen(false);
-
-		// 清理目标位置的反向门
 		door.cleanupTargetDoor();
 
-		// ========== 播放关门音效 ==========
 		level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
 
 		player.displayClientMessage(
-				Component.literal("§a✦ 已关闭任意门"),
+				Component.translatable("command.rym.door_closed"),
 				true
 		);
 
 		level.players().forEach(p -> {
 			if (p != player && p.distanceToSqr(Vec3.atCenterOf(pos)) < 100) {
 				p.displayClientMessage(
-						Component.literal("§7✦ 附近一扇任意门被关闭了"),
+						Component.translatable("command.rym.nearby_closed"),
 						true
 				);
 			}
@@ -260,15 +258,45 @@ public final class DimensionalDoorTeleporter {
 		return true;
 	}
 
+	/**
+	 * 传送玩家 - 添加方向检测，防止从背面进入
+	 */
 	public static boolean teleportPlayer(ServerPlayer player, DimensionalDoorBlockEntity door) {
 		if (!door.isOpen()) {
 			player.displayClientMessage(
-					Component.literal("§c✦ 任意门已经关闭了"),
+					Component.translatable("command.rym.door_closed_for_teleport"),
 					true
 			);
 			return false;
 		}
 
+		// ========== 检测玩家是否从正面进入 ==========
+		Level level = door.getLevel();
+		if (level == null) return false;
+
+		BlockPos doorPos = door.getBlockPos();
+		BlockState state = level.getBlockState(doorPos);
+		if (!(state.getBlock() instanceof DimensionalDoorBlock)) return false;
+
+		Direction facing = state.getValue(DimensionalDoorBlock.FACING);
+		Vec3 normal = getNormal(facing);
+		Vec3 doorCenter = getDoorCenter(doorPos, facing);
+
+		// 计算玩家相对于门的位置
+		Vec3 playerPos = player.position();
+		Vec3 relativePos = playerPos.subtract(doorCenter);
+		double dotProduct = relativePos.dot(normal);
+
+		// ========== 如果玩家在门的背面（法线方向相反），拒绝传送 ==========
+		if (dotProduct < 0) {
+			player.displayClientMessage(
+					Component.translatable("command.rym.wrong_side"),
+					true
+			);
+			return false;
+		}
+
+		// ========== 执行传送 ==========
 		ResourceKey<Level> targetDim = door.getTargetDimension();
 		double tx = door.getTargetX() + 0.5;
 		double ty = door.getTargetY() + 0.5;
@@ -277,13 +305,12 @@ public final class DimensionalDoorTeleporter {
 		ServerLevel targetLevel = player.server.getLevel(targetDim);
 		if (targetLevel == null) {
 			player.displayClientMessage(
-					Component.literal("§c✦ 目标维度不存在: " + targetDim.location()),
+					Component.translatable("command.rym.dimension_not_found", targetDim.location()),
 					true
 			);
 			return false;
 		}
 
-		// ========== 强制加载目标区块 ==========
 		targetLevel.getChunk(new BlockPos((int) tx, (int) ty, (int) tz));
 
 		// ========== 传送音效 ==========
@@ -307,8 +334,9 @@ public final class DimensionalDoorTeleporter {
 				1.0F
 		);
 
+		// ========== 修复：显示传送成功 ==========
 		player.displayClientMessage(
-				Component.literal("§a✦ 传送成功！"),
+				Component.translatable("command.rym.teleport_success"),
 				true
 		);
 		return true;
