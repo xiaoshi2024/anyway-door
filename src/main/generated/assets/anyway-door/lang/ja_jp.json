@@ -36,5 +36,7 @@
 
   "command.rym.list_structures_title": "§6=== 利用可能な構造物 (%d個) ===\n",
   "command.rym.list_structures_empty": "§c構造物が見つかりません",
-  "command.rym.list_structures_continue": "§7続きを見るには /rym list_structures <ページ> を入力"
+  "command.rym.list_structures_continue": "§7続きを見るには /rym list_structures <ページ> を入力",
+  "command.rym.linked_existing_door": "§a目標地点の既存の任意ドアとリンクしました！",
+  "command.rym.structure_located_dim": "§a%s §a(次元: §b%s§a, 距離 %s) §a座標: §b(%d, %d, %d) を発見しました"
 }

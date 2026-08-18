@@ -2,6 +2,8 @@ package xiaoshi2022.anywaydoor.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -19,6 +21,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
+import xiaoshi2022.anywaydoor.AnywayDoor;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
 import xiaoshi2022.anywaydoor.teleport.DimensionalDoorTeleporter;
 
@@ -108,15 +111,50 @@ public class DimensionalDoorBlock extends Block implements EntityBlock {
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
 		if (!level.isClientSide && !state.is(newState.getBlock())) {
 			if (level.getBlockEntity(pos) instanceof DimensionalDoorBlockEntity door) {
-				// ========== 如果是反向门，清理父门关联 ==========
-				if (door.isReverseDoor()) {
-					// 清理父门关联已经在 setRemoved 中处理了
-					// 但这里额外调用一次确保清理
-					door.cleanupAllPortals();
-				} else {
-					// 普通门：清理所有关联
-					door.cleanupAllPortals();
+				ServerLevel serverLevel = (ServerLevel) level;
+				net.minecraft.server.MinecraftServer server = serverLevel.getServer();
+
+				BlockPos targetDoorPos = door.getTargetDoorPos();
+				ResourceKey<Level> targetDoorDimension = door.getTargetDoorDimension();
+				BlockPos parentDoorPos = door.getParentDoorPos();
+				ResourceKey<Level> parentDoorDimension = door.getParentDoorDimension();
+
+				// ========== 情况1: 反向门 → 清理并移除父门 ==========
+				if (door.isReverseDoor() && parentDoorPos != null && parentDoorDimension != null) {
+					ServerLevel parentLevel = server.getLevel(parentDoorDimension);
+					if (parentLevel != null) {
+						BlockEntity parentBE = parentLevel.getBlockEntity(parentDoorPos);
+						if (parentBE instanceof DimensionalDoorBlockEntity parentDoor) {
+							parentDoor.cleanupPortal();      // 移除传送门实体
+							parentDoor.cleanupTargetDoor();  // 清理目标关联
+							parentDoor.setOpen(false);
+							parentDoor.setChanged();
+							parentLevel.sendBlockUpdated(parentDoorPos, parentLevel.getBlockState(parentDoorPos),
+									parentLevel.getBlockState(parentDoorPos), 3);
+						}
+						parentLevel.removeBlock(parentDoorPos, false);
+					}
 				}
+
+				// ========== 情况2: 父门 → 清理并移除反向门 ==========
+				if (targetDoorPos != null && targetDoorDimension != null) {
+					ServerLevel targetLevel = server.getLevel(targetDoorDimension);
+					if (targetLevel != null) {
+						BlockEntity targetBE = targetLevel.getBlockEntity(targetDoorPos);
+						if (targetBE instanceof DimensionalDoorBlockEntity targetDoor) {
+							targetDoor.cleanupPortal();      // 移除传送门实体
+							targetDoor.setOpen(false);
+							targetDoor.setChanged();
+							targetLevel.sendBlockUpdated(targetDoorPos, targetLevel.getBlockState(targetDoorPos),
+									targetLevel.getBlockState(targetDoorPos), 3);
+						}
+						targetLevel.removeBlock(targetDoorPos, false);
+					}
+				}
+
+				// ========== 清理当前门 ==========
+				door.cleanupPortal();
+				AnywayDoor.unregisterDoor(door);
 			}
 		}
 		super.onRemove(state, level, pos, newState, movedByPiston);

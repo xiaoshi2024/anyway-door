@@ -36,5 +36,7 @@
 
   "command.rym.list_structures_title": "§6=== 可用结构列表 (%d个) ===\n",
   "command.rym.list_structures_empty": "§c没有找到任何结构",
-  "command.rym.list_structures_continue": "§7输入 /rym list_structures <页码> 查看更多"
+  "command.rym.list_structures_continue": "§7输入 /rym list_structures <页码> 查看更多",
+  "command.rym.linked_existing_door": "§a已连接到目标位置的已有任意门！",
+  "command.rym.structure_located_dim": "§a已定位 %s §a(维度: §b%s§a, 距离 %s) §a坐标: §b(%d, %d, %d)"
 }

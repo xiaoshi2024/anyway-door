@@ -19,7 +19,6 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import xiaoshi2022.anywaydoor.AnywayDoor;
@@ -51,6 +50,9 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	private static final long TELEPORT_COOLDOWN_TICKS = 20L;
 	private final Map<UUID, Long> lastTeleportTime = new HashMap<>();
 
+	// ========== 新增：记录开门时间 ==========
+	private long lastOpenTick = 0;
+
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	private boolean open = false;
@@ -81,37 +83,9 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 	public void setRemoved() {
 		super.setRemoved();
 		AnywayDoor.unregisterDoor(this);
-
-		// ========== 如果是反向门，清理父门关联 ==========
-		if (isReverseDoor && parentDoorPos != null && parentDoorDimension != null) {
-			cleanupParentDoorAssociation();
+		if (level != null) {  // ← 添加检查
+			cleanupPortal();
 		}
-
-		cleanupTargetDoor();
-		cleanupPortal();
-	}
-
-	// ========== 新增：清理父门关联 ==========
-	private void cleanupParentDoorAssociation() {
-		if (level == null || level.getServer() == null) return;
-
-		ServerLevel parentLevel = level.getServer().getLevel(parentDoorDimension);
-		if (parentLevel == null) return;
-
-		BlockEntity parentBE = parentLevel.getBlockEntity(parentDoorPos);
-		if (parentBE instanceof DimensionalDoorBlockEntity parentDoor) {
-			// 清除父门对目标门的引用
-			parentDoor.targetDoorPos = null;
-			parentDoor.targetDoorDimension = null;
-			parentDoor.setChanged();
-
-			// 如果父门的传送门还在，清理它
-			parentDoor.cleanupPortal();
-			parentDoor.setOpen(false);
-		}
-
-		parentDoorPos = null;
-		parentDoorDimension = null;
 	}
 
 	@Override
@@ -144,6 +118,9 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 
 	public void setOpen(boolean open) {
 		this.open = open;
+		if (open && level != null) {
+			this.lastOpenTick = level.getGameTime();  // 记录开门时间
+		}
 		this.setChanged();
 		Level level = this.level;
 		if (level != null) {
@@ -185,6 +162,15 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 		this.targetDoorPos = pos;
 		this.targetDoorDimension = dimension;
 		this.setChanged();
+	}
+
+	// ========== 添加这两个 getter 方法 ==========
+	public BlockPos getTargetDoorPos() {
+		return this.targetDoorPos;
+	}
+
+	public ResourceKey<Level> getTargetDoorDimension() {
+		return this.targetDoorDimension;
 	}
 
 	public void cleanupTargetDoor() {
@@ -240,6 +226,10 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 			}
 			portalEntityId = -1;
 			this.setChanged();
+			// ========== 强制同步到客户端 ==========
+			if (level instanceof ServerLevel serverLevel) {
+				serverLevel.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+			}
 		}
 	}
 
@@ -255,6 +245,12 @@ public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockE
 			return;
 		}
 
+		// ========== 开门后 1.5 秒内不传送，防止刚开门就传送 ==========
+		if (level.getGameTime() - lastOpenTick < 30) {
+			return;
+		}
+
+		// ========== 传送冷却检测 ==========
 		AABB detectionBox = new AABB(
 				worldPosition.getX() + 0.05,
 				worldPosition.getY() + 0.15,

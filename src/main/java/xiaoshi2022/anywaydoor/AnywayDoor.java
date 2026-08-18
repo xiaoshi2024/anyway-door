@@ -26,6 +26,8 @@ import net.minecraft.world.phys.HitResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
+import xiaoshi2022.anywaydoor.command.StructureNameArgumentType;
+import xiaoshi2022.anywaydoor.regsiter.ModArgumentTypes;
 import xiaoshi2022.anywaydoor.regsiter.ModBlockEntities;
 import xiaoshi2022.anywaydoor.regsiter.ModBlocks;
 
@@ -86,6 +88,7 @@ public class AnywayDoor implements ModInitializer {
 	public void onInitialize() {
 		ModBlocks.init();
 		ModBlockEntities.init();
+		ModArgumentTypes.init();
 		registerCommands();
 		registerCreativeTabs();
 
@@ -163,28 +166,30 @@ public class AnywayDoor implements ModInitializer {
 													targetName
 											);
 										})))
-						// ========== locate 指令 ==========
+						// ========== locate 指令 - 使用自定义参数类型 ==========
 						.then(literal("locate")
-								.then(argument("structure", StringArgumentType.word())
+								.then(argument("structure", StructureNameArgumentType.structure())
 										.suggests(STRUCTURE_SUGGESTIONS)
 										.executes(ctx -> {
-											String structureName = StringArgumentType.getString(ctx, "structure");
-											return locateStructure(
-													ctx.getSource().getPlayerOrException(),
-													structureName,
-													100
-											);
+											String structure = StructureNameArgumentType.getStructure(ctx, "structure");
+											return locateStructure(ctx.getSource().getPlayerOrException(), structure, 100, null);
 										})
 										.then(argument("radius", IntegerArgumentType.integer(1, 10000))
 												.executes(ctx -> {
-													String structureName = StringArgumentType.getString(ctx, "structure");
+													String structure = StructureNameArgumentType.getStructure(ctx, "structure");
 													int radius = IntegerArgumentType.getInteger(ctx, "radius");
-													return locateStructure(
-															ctx.getSource().getPlayerOrException(),
-															structureName,
-															radius
-													);
-												})))
+													return locateStructure(ctx.getSource().getPlayerOrException(), structure, radius, null);
+												})
+												.then(argument("dimension", StringArgumentType.word())
+														.executes(ctx -> {
+															String structure = StructureNameArgumentType.getStructure(ctx, "structure");
+															int radius = IntegerArgumentType.getInteger(ctx, "radius");
+															String dimension = StringArgumentType.getString(ctx, "dimension");
+															return locateStructure(ctx.getSource().getPlayerOrException(), structure, radius, dimension);
+														})
+												)
+										)
+								)
 						)
 						// ========== list_structures 指令 ==========
 						.then(literal("list_structures")
@@ -296,9 +301,9 @@ public class AnywayDoor implements ModInitializer {
 	}
 
 	/**
-	 * 定位结构并设置为目标
+	 * 定位结构并设置为目标（支持跨维度）
 	 */
-	private int locateStructure(ServerPlayer player, String structureName, int radiusChunks) {
+	private int locateStructure(ServerPlayer player, String input, int radiusChunks, String dimensionName) {
 		DimensionalDoorBlockEntity door = findLookedAtDoor(player);
 		if (door == null) {
 			player.displayClientMessage(
@@ -308,6 +313,29 @@ public class AnywayDoor implements ModInitializer {
 			return 0;
 		}
 
+		// ========== 解析结构名和维度 ==========
+		// input 可能包含: "minecraft:fortress 50 the_nether"
+		String structureName = input;
+		int radius = radiusChunks;
+		String dimName = dimensionName;
+
+		// 如果没有指定维度，尝试从 input 中解析
+		if (dimName == null) {
+			String[] parts = input.trim().split("\\s+");
+			if (parts.length >= 2) {
+				// 尝试解析: "structure radius" 或 "structure dimension"
+				try {
+					radius = Integer.parseInt(parts[parts.length - 1]);
+					structureName = String.join(" ", java.util.Arrays.copyOf(parts, parts.length - 1));
+				} catch (NumberFormatException ignored) {
+					// 最后一个不是数字，可能是维度名
+					dimName = parts[parts.length - 1];
+					structureName = String.join(" ", java.util.Arrays.copyOf(parts, parts.length - 1));
+				}
+			}
+		}
+
+		// ========== 解析结构 ID ==========
 		ResourceLocation structureId;
 		if (structureName.contains(":")) {
 			structureId = ResourceLocation.tryParse(structureName);
@@ -323,7 +351,35 @@ public class AnywayDoor implements ModInitializer {
 			return 0;
 		}
 
-		ServerLevel level = player.serverLevel();
+		// ========== 解析目标维度 ==========
+		ServerLevel targetLevel;
+		if (dimName == null || dimName.isEmpty()) {
+			targetLevel = player.serverLevel();
+		} else {
+			ResourceLocation dimId = ResourceLocation.tryParse(dimName);
+			if (dimId == null) {
+				// 尝试补全 minecraft:
+				dimId = ResourceLocation.tryParse("minecraft:" + dimName);
+			}
+			if (dimId == null) {
+				player.displayClientMessage(
+						Component.translatable("command.rym.invalid_dimension", dimName),
+						true
+				);
+				return 0;
+			}
+			ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimId);
+			ServerLevel level = player.server.getLevel(dimKey);
+			if (level == null) {
+				player.displayClientMessage(
+						Component.translatable("command.rym.dimension_not_exist", dimName),
+						true
+				);
+				return 0;
+			}
+			targetLevel = level;
+		}
+
 		BlockPos playerPos = player.blockPosition();
 
 		try {
@@ -343,26 +399,27 @@ public class AnywayDoor implements ModInitializer {
 
 			HolderSet<Structure> holderSet = HolderSet.direct(structureHolder.get());
 
-			com.mojang.datafixers.util.Pair<BlockPos, Holder<Structure>> result = level.getChunkSource()
+			// ========== 在目标维度中查找结构 ==========
+			com.mojang.datafixers.util.Pair<BlockPos, Holder<Structure>> result = targetLevel.getChunkSource()
 					.getGenerator()
 					.findNearestMapStructure(
-							level,
+							targetLevel,
 							holderSet,
 							playerPos,
-							radiusChunks,
+							radius,
 							false
 					);
 
 			if (result == null) {
 				player.displayClientMessage(
-						Component.translatable("command.rym.structure_not_found", structureId, radiusChunks),
+						Component.translatable("command.rym.structure_not_found", structureId, radius),
 						true
 				);
 				return 0;
 			}
 
 			BlockPos foundPos = result.getFirst();
-			BlockPos safePos = findStructureSurface(level, foundPos);
+			BlockPos safePos = findStructureSurface(targetLevel, foundPos);
 
 			if (safePos == null) {
 				player.displayClientMessage(
@@ -372,7 +429,8 @@ public class AnywayDoor implements ModInitializer {
 				return 0;
 			}
 
-			door.setTarget(level.dimension(), safePos.getX(), safePos.getY(), safePos.getZ());
+			// ========== 设置门的目标 ==========
+			door.setTarget(targetLevel.dimension(), safePos.getX(), safePos.getY(), safePos.getZ());
 
 			float distance = Mth.sqrt((float) (
 					(safePos.getX() - playerPos.getX()) * (safePos.getX() - playerPos.getX()) +
@@ -396,11 +454,20 @@ public class AnywayDoor implements ModInitializer {
 				} catch (Exception ignored) {}
 			}
 
-			player.displayClientMessage(
-					Component.translatable("command.rym.structure_located",
-							structureDisplayName, distanceStr, safePos.getX(), safePos.getY(), safePos.getZ()),
-					true
-			);
+			String dimDisplay = targetLevel.dimension().location().toString();
+			if (!dimDisplay.equals(player.serverLevel().dimension().location().toString())) {
+				player.displayClientMessage(
+						Component.translatable("command.rym.structure_located_dim",
+								structureDisplayName, dimDisplay, distanceStr, safePos.getX(), safePos.getY(), safePos.getZ()),
+						true
+				);
+			} else {
+				player.displayClientMessage(
+						Component.translatable("command.rym.structure_located",
+								structureDisplayName, distanceStr, safePos.getX(), safePos.getY(), safePos.getZ()),
+						true
+				);
+			}
 
 			if (door.isOpen()) {
 				player.displayClientMessage(

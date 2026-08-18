@@ -36,5 +36,7 @@
 
   "command.rym.list_structures_title": "§6=== Available Structures (%d) ===\n",
   "command.rym.list_structures_empty": "§cNo structures found",
-  "command.rym.list_structures_continue": "§7Type /rym list_structures <page> to see more"
+  "command.rym.list_structures_continue": "§7Type /rym list_structures <page> to see more",
+  "command.rym.linked_existing_door": "§aLinked to existing door at target location!",
+  "command.rym.structure_located_dim": "§aLocated %s §a(dimension: §b%s§a, distance %s) §acoordinates: §b(%d, %d, %d)"
 }
