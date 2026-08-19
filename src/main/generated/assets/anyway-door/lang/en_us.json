@@ -1,5 +1,12 @@
 {
+  "itemGroup.anyway-door": "Anyway Door",
+
   "block.anyway-door.dimensional_door": "Dimensional Door",
+  "item.anyway-door.duolab_spawn_egg": "Duolab Spawn Egg",
+  "item.anyway-door.dorayaki": "Dorayaki",
+  "item.anyway-door.dimensional_door_item": "Dimensional Door (Item)",
+
+  "entity.anyway-door.duolab": "Duolab",
 
   "command.rym.set.usage": "§c✦ Please use /rym set to set the target location first!",
   "command.rym.already_open": "§e✦ The Dimensional Door is already open",
@@ -38,5 +45,53 @@
   "command.rym.list_structures_empty": "§cNo structures found",
   "command.rym.list_structures_continue": "§7Type /rym list_structures <page> to see more",
   "command.rym.linked_existing_door": "§aLinked to existing door at target location!",
-  "command.rym.structure_located_dim": "§aLocated %s §a(dimension: §b%s§a, distance %s) §acoordinates: §b(%d, %d, %d)"
+  "command.rym.structure_located_dim": "§aLocated %s §a(dimension: §b%s§a, distance %s) §acoordinates: §b(%d, %d, %d)",
+
+  "command.rym.no_duolab_nearby": "§cNo Duolab found nearby!",
+  "command.rym.summon_success": "§a✦ Duolab summoned!",
+  "command.rym.summon_hint_gift": "§7✦ Right-click with item → stored in §bpocket§7 after 5s",
+  "command.rym.summon_hint_sit": "§7✦ Right-click empty hand to toggle §bsit§7/§bstand",
+  "command.rym.summon_hint_pocket": "§7✦ §b/rym duolab_pocket §7to view pocket",
+  "command.rym.pocket_empty": "§e✦ Duolab's pocket is empty!",
+  "command.rym.pocket_title": "§6=== Duolab's Pocket (%d items) ===\n",
+  "command.rym.pocket_count": "§7Total %d items",
+
+  "entity.anyway-door.duolab.sit": "DuoLab sat down.",
+  "entity.anyway-door.duolab.stand": "DuoLab stood up.",
+  "entity.anyway-door.duolab.dorayaki_given": "DuoLab happily accepted the dorayaki!",
+  "entity.anyway-door.duolab.already_given": "Come on, didn't I already give you one? I'm all out! No more!",
+  "entity.anyway-door.duolab.dropped_item": "DuoLab angrily threw out %s!",
+  "entity.anyway-door.duolab.pocket_full": "DuoLab's pocket is full!",
+  "entity.anyway-door.duolab.gift_received": "DuoLab received %s",
+  "entity.anyway-door.duolab.stored": "DuoLab put %s into the pocket",
+  "entity.anyway-door.duolab.pocket_full_drop": "Pocket full! %s fell on the ground",
+  "entity.anyway-door.duolab.looking": "DuoLab is looking for the Anywhere Door...",
+  "entity.anyway-door.duolab.throwing_out": "DuoLab threw out %s",
+  "entity.anyway-door.duolab.found_door": "DuoLab found the Anywhere Door!",
+  "entity.anyway-door.duolab.already_has_door": "DuoLab already has an Anywhere Door in the pocket!",
+  "entity.anyway-door.duolab.mod_item_recognized": "DuoLab recognized mod item: %s",
+  "entity.anyway-door.duolab.door_recognized": "DuoLab recognized the door to anywhere!",
+  "entity.anyway-door.duolab.no_more_door": "Really? don't have it anymore! Doraemon won't give it to you again!",
+  "entity.anyway-door.duolab.eat_dorayaki": "Doraemon happily picked up the mochi cake!",
+
+  "item.anyway-door.dimensional_door": "Dimensional Door",
+
+  "entity.anyway-door.duolab.door_set": "Dimensional Door target set to: %s (%d, %d, %d)",
+  "entity.anyway-door.duolab.locating": "DoraB is searching for %s...",
+  "entity.anyway-door.duolab.tping_to_player": "Teleporting to player %s...",
+  "entity.anyway-door.duolab.door_closed": "Dimensional Door closed!",
+  "entity.anyway-door.duolab.no_door": "Oh no, I don't have a Dimensional Door in my pocket!",
+
+  "entity.anyway-door.duolab.door_to_structure": "Dimensional Door opened! Heading to %s (%d, %d, %d)",
+  "entity.anyway-door.duolab.invalid_structure": "Structure not found: %s",
+  "entity.anyway-door.duolab.invalid_dimension": "Invalid dimension: %s",
+  "entity.anyway-door.duolab.dimension_not_found": "Dimension does not exist: %s",
+  "entity.anyway-door.duolab.structure_not_found": "Cannot find %s",
+  "entity.anyway-door.duolab.structure_not_found_radius": "Cannot find %s within %d blocks",
+  "entity.anyway-door.duolab.structure_error": "Location failed: %s",
+  "entity.anyway-door.duolab.door_error": "Failed to place Dimensional Door!",
+
+  "entity.anyway-door.duolab.door_received": "DuoLab received the Dimensional Door!",
+  "entity.anyway-door.duolab.want_dorayaki": "DuoLab is staring at your dorayaki...",
+  "entity.anyway-door.duolab.storing_in_progress": "§eDuolab is storing something, please wait..."
 }

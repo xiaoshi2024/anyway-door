@@ -1,5 +1,12 @@
 {
+  "itemGroup.anyway-door": "任意门",
+
   "block.anyway-door.dimensional_door": "任意门",
+  "item.anyway-door.duolab_spawn_egg": "哆啦B梦刷怪蛋",
+  "item.anyway-door.dorayaki": "铜锣烧",
+  "item.anyway-door.dimensional_door_item": "任意门（物品）",
+
+  "entity.anyway-door.duolab": "哆啦B梦",
 
   "command.rym.set.usage": "§c✦ 请先使用 /rym set 设置目标地点！",
   "command.rym.already_open": "§e✦ 任意门已经打开了",
@@ -38,5 +45,53 @@
   "command.rym.list_structures_empty": "§c没有找到任何结构",
   "command.rym.list_structures_continue": "§7输入 /rym list_structures <页码> 查看更多",
   "command.rym.linked_existing_door": "§a已连接到目标位置的已有任意门！",
-  "command.rym.structure_located_dim": "§a已定位 %s §a(维度: §b%s§a, 距离 %s) §a坐标: §b(%d, %d, %d)"
+  "command.rym.structure_located_dim": "§a已定位 %s §a(维度: §b%s§a, 距离 %s) §a坐标: §b(%d, %d, %d)",
+
+  "command.rym.no_duolab_nearby": "§c附近没有找到你的哆啦B梦！",
+  "command.rym.summon_success": "§a✦ 哆啦B梦已召唤！",
+  "command.rym.summon_hint_gift": "§7✦ 右键给物品 → 5秒后存入§b口袋§7",
+  "command.rym.summon_hint_sit": "§7✦ 空手右键切换§b坐姿§7/§b站立",
+  "command.rym.summon_hint_pocket": "§7✦ §b/rym duolab_pocket §7查看口袋",
+  "command.rym.pocket_empty": "§e✦ 哆啦B梦的口袋是空的！",
+  "command.rym.pocket_title": "§6=== 哆啦B梦的口袋 (%d个物品) ===\n",
+  "command.rym.pocket_count": "§7共 %d 个物品",
+
+  "entity.anyway-door.duolab.sit": "哆啦B梦坐下了",
+  "entity.anyway-door.duolab.stand": "哆啦B梦站起来了",
+  "entity.anyway-door.duolab.dorayaki_given": "哆啦B梦开心地收下了铜锣烧！",
+  "entity.anyway-door.duolab.already_given": "真是的我不是给过你了吗？没有了！不给！",
+  "entity.anyway-door.duolab.dropped_item": "哆啦B梦生气地丢出了 %s！",
+  "entity.anyway-door.duolab.pocket_full": "哆啦B梦的口袋满了！",
+  "entity.anyway-door.duolab.gift_received": "哆啦B梦收下了 %s",
+  "entity.anyway-door.duolab.stored": "哆啦B梦把 %s 放进了口袋里",
+  "entity.anyway-door.duolab.pocket_full_drop": "口袋满了！%s 掉在了地上",
+  "entity.anyway-door.duolab.looking": "哆啦B梦正在寻找任意门...",
+  "entity.anyway-door.duolab.throwing_out": "哆啦B梦丢出了 %s",
+  "entity.anyway-door.duolab.found_door": "哆啦B梦找到了任意门！",
+  "entity.anyway-door.duolab.already_has_door": "哆啦B梦口袋里已经有任意门了！",
+  "entity.anyway-door.duolab.mod_item_recognized": "哆啦B梦已识别出任意门！DuoLab识别了模组物品: %s",
+  "entity.anyway-door.duolab.door_recognized": "哆啦B梦识别了任意门!",
+  "entity.anyway-door.duolab.no_more_door": "真是的,已经没有啦！哆啦B梦不会再给你了！",
+  "entity.anyway-door.duolab.eat_dorayaki": "哆啦B梦开心地捡起了铜锣烧！",
+
+  "item.anyway-door.dimensional_door": "任意门",
+
+  "entity.anyway-door.duolab.door_set": "任意门已设置目标：%s (%d, %d, %d)",
+  "entity.anyway-door.duolab.locating": "哆啦B梦正在寻找%s...",
+  "entity.anyway-door.duolab.tping_to_player": "正在传送到玩家%s附近...",
+  "entity.anyway-door.duolab.door_closed": "任意门已关闭！",
+  "entity.anyway-door.duolab.no_door": "哎呀，我口袋里没有任意门呢！",
+
+  "entity.anyway-door.duolab.door_to_structure": "任意门已开启！通往%s (%d, %d, %d)",
+  "entity.anyway-door.duolab.invalid_structure": "找不到结构：%s",
+  "entity.anyway-door.duolab.invalid_dimension": "无效维度：%s",
+  "entity.anyway-door.duolab.dimension_not_found": "维度不存在：%s",
+  "entity.anyway-door.duolab.structure_not_found": "找不到%s",
+  "entity.anyway-door.duolab.structure_not_found_radius": "在%d格内找不到%s",
+  "entity.anyway-door.duolab.structure_error": "定位失败：%s",
+  "entity.anyway-door.duolab.door_error": "任意门放置失败！",
+
+  "entity.anyway-door.duolab.door_received": "哆啦B梦收下了任意门！",
+  "entity.anyway-door.duolab.want_dorayaki": "哆啦B梦眼巴巴地看着你手里的铜锣烧...",
+  "entity.anyway-door.duolab.storing_in_progress": "§e哆啦B梦正在存东西呢，请稍等..."
 }

@@ -13,13 +13,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.api.PortalAPI;
 import qouteall.imm_ptl.core.portal.Portal;
 import xiaoshi2022.anywaydoor.block.DimensionalDoorBlock;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
+import xiaoshi2022.anywaydoor.entity.DuolabEntity;
 import xiaoshi2022.anywaydoor.regsiter.ModBlocks;
+
+import java.util.List;
 
 public final class DimensionalDoorTeleporter {
 
@@ -407,7 +411,6 @@ public final class DimensionalDoorTeleporter {
 			return false;
 		}
 
-		// ========== 检测玩家是否从正面进入 ==========
 		Level level = door.getLevel();
 		if (level == null) return false;
 
@@ -459,7 +462,6 @@ public final class DimensionalDoorTeleporter {
 			targetLevel.getChunk(targetPos);
 		}
 
-		// ========== 使用 PortalAPI.teleportEntity 传送 ==========
 		PortalAPI.teleportEntity(player, targetLevel, new Vec3(tx, ty, tz));
 
 		// ========== 传送音效 ==========

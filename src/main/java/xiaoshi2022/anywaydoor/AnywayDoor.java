@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
 import xiaoshi2022.anywaydoor.command.StructureNameArgumentType;
-import xiaoshi2022.anywaydoor.regsiter.ModArgumentTypes;
-import xiaoshi2022.anywaydoor.regsiter.ModBlockEntities;
-import xiaoshi2022.anywaydoor.regsiter.ModBlocks;
+import xiaoshi2022.anywaydoor.listener.ChatListener;
+import xiaoshi2022.anywaydoor.regsiter.*;
 
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -89,8 +88,14 @@ public class AnywayDoor implements ModInitializer {
 		ModBlocks.init();
 		ModBlockEntities.init();
 		ModArgumentTypes.init();
+		ModItems.init();          // 注册物品
+		ModEntities.init();       // 注册实体
+		ModItemGroups.init();     // 注册创造模式物品栏
 		registerCommands();
 		registerCreativeTabs();
+
+		// ========== 注册聊天监听器 ==========
+		ChatListener.register();
 
 		ServerTickEvents.END_WORLD_TICK.register(world -> {
 			if (world instanceof ServerLevel serverLevel) {

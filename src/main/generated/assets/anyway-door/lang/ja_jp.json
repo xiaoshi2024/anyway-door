@@ -1,5 +1,12 @@
 {
+  "itemGroup.anyway-door": "どこでもドア",
+
   "block.anyway-door.dimensional_door": "どこでもドア",
+  "item.anyway-door.duolab_spawn_egg": "ドラB梦（ネタ）のスポーンエッグ",
+  "item.anyway-door.dorayaki": "どら焼き",
+  "item.anyway-door.dimensional_door_item": "どこでもドア（アイテム）",
+
+  "entity.anyway-door.duolab": "ドラB梦（ネタ／ドラえもんのパロディ）",
 
   "command.rym.set.usage": "§c✦ 最初に /rym set で目的地を設定してください！",
   "command.rym.already_open": "§e✦ どこでもドアはもう開いています",
@@ -38,5 +45,53 @@
   "command.rym.list_structures_empty": "§c構造物が見つかりません",
   "command.rym.list_structures_continue": "§7続きを見るには /rym list_structures <ページ> を入力",
   "command.rym.linked_existing_door": "§a目標地点の既存の任意ドアとリンクしました！",
-  "command.rym.structure_located_dim": "§a%s §a(次元: §b%s§a, 距離 %s) §a座標: §b(%d, %d, %d) を発見しました"
+  "command.rym.structure_located_dim": "§a%s §a(次元: §b%s§a, 距離 %s) §a座標: §b(%d, %d, %d) を発見しました",
+
+  "command.rym.no_duolab_nearby": "§c近くにドラB梦（ネタ）が見つかりません！",
+  "command.rym.summon_success": "§a✦ ドラB梦（ネタ）を召喚しました！",
+  "command.rym.summon_hint_gift": "§7✦ アイテムを持って右クリック → §bポケット§7に5秒後にしまわれる",
+  "command.rym.summon_hint_sit": "§7✦ 空手右クリックで §b座り§7/§b立ち§7を切り替え",
+  "command.rym.summon_hint_pocket": "§7✦ §b/rym duolab_pocket §7でポケットを表示",
+  "command.rym.pocket_empty": "§e✦ ドラB梦（ネタ）のポケットは空です！",
+  "command.rym.pocket_title": "§6=== ドラB梦（ネタ）のポケット (%d個) ===\n",
+  "command.rym.pocket_count": "§7合計 %d 個のアイテム",
+
+  "entity.anyway-door.duolab.sit": "ドラB梦が座った。",
+  "entity.anyway-door.duolab.stand": "ドラB梦が立ち上がった。",
+  "entity.anyway-door.duolab.dorayaki_given": "ドラB梦が嬉しそうにどら焼きを受け取った！",
+  "entity.anyway-door.duolab.already_given": "もうあげたじゃない！もうないんだから！ダメ！",
+  "entity.anyway-door.duolab.dropped_item": "ドラB梦が怒って%sを投げ出した！",
+  "entity.anyway-door.duolab.pocket_full": "ドラB梦の四次元ポケットがいっぱいだ！",
+  "entity.anyway-door.duolab.gift_received": "ドラB梦が%sを受け取った",
+  "entity.anyway-door.duolab.stored": "ドラB梦が%sをポケットに入れた",
+  "entity.anyway-door.duolab.pocket_full_drop": "ポケットがいっぱい！%sが地面に落ちた",
+  "entity.anyway-door.duolab.looking": "ドラB梦がどこでもドアを探している…",
+  "entity.anyway-door.duolab.throwing_out": "ドラB梦が%sを投げ出した",
+  "entity.anyway-door.duolab.found_door": "ドラB梦がどこでもドアを見つけた！",
+  "entity.anyway-door.duolab.already_has_door": "ドラB梦はもうポケットにどこでもドアを持っています！",
+  "entity.anyway-door.duolab.mod_item_recognized": "ドラB梦がModアイテムを認識しました: %s",
+  "entity.anyway-door.duolab.door_recognized": "ドラB梦がどこでもドアを認識しました！",
+  "entity.anyway-door.duolab.no_more_door": "もう、ないよ！ドラB夢は二度とあげないからね！",
+  "entity.anyway-door.duolab.eat_dorayaki": "ドラB夢が嬉しそうにどら焼きを拾った！",
+
+  "item.anyway-door.dimensional_door": "どこでもドア",
+
+  "entity.anyway-door.duolab.door_set": "どこでもドアの目標を設定したよ：%s (%d, %d, %d)",
+  "entity.anyway-door.duolab.locating": "ドラB夢が%sを探している...",
+  "entity.anyway-door.duolab.tping_to_player": "プレイヤー%sのところにテレポートするよ...",
+  "entity.anyway-door.duolab.door_closed": "どこでもドアを閉めたよ！",
+  "entity.anyway-door.duolab.no_door": "あら、ポケットにどこでもドアがないよ！",
+
+  "entity.anyway-door.duolab.door_to_structure": "どこでもドアを開けたよ！%sへ行くよ (%d, %d, %d)",
+  "entity.anyway-door.duolab.invalid_structure": "構造物が見つからない：%s",
+  "entity.anyway-door.duolab.invalid_dimension": "無効なディメンション：%s",
+  "entity.anyway-door.duolab.dimension_not_found": "ディメンションが存在しない：%s",
+  "entity.anyway-door.duolab.structure_not_found": "%sが見つからない",
+  "entity.anyway-door.duolab.structure_not_found_radius": "%dブロック以内に%sが見つからない",
+  "entity.anyway-door.duolab.structure_error": "位置特定に失敗：%s",
+  "entity.anyway-door.duolab.door_error": "どこでもドアの設置に失敗した！",
+
+  "entity.anyway-door.duolab.door_received": "ドラB夢がどこでもドアを受け取った！",
+  "entity.anyway-door.duolab.want_dorayaki": "ドラB夢があなたのどら焼きをじっと見つめている...",
+  "entity.anyway-door.duolab.storing_in_progress": "§eドラB梦（ネタ）がしまっています、お待ちください..."
 }

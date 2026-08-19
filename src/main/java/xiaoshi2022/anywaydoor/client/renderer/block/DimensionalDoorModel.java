@@ -1,8 +1,7 @@
-package xiaoshi2022.anywaydoor.client.renderer;
+package xiaoshi2022.anywaydoor.client.renderer.block;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
-import xiaoshi2022.anywaydoor.AnywayDoor;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
 
 import static xiaoshi2022.anywaydoor.AnywayDoor.MOD_ID;

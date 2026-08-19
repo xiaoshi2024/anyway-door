@@ -1,4 +1,4 @@
-package xiaoshi2022.anywaydoor.client.renderer;
+package xiaoshi2022.anywaydoor.client.renderer.block;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
