@@ -25,7 +25,10 @@ import xiaoshi2022.anywaydoor.AnywayDoor;
 import xiaoshi2022.anywaydoor.regsiter.ModBlockEntities;
 import xiaoshi2022.anywaydoor.teleport.DimensionalDoorTeleporter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class DimensionalDoorBlockEntity extends BlockEntity implements GeoBlockEntity {
 

@@ -6,24 +6,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.api.PortalAPI;
 import qouteall.imm_ptl.core.portal.Portal;
 import xiaoshi2022.anywaydoor.block.DimensionalDoorBlock;
 import xiaoshi2022.anywaydoor.block.entity.DimensionalDoorBlockEntity;
-import xiaoshi2022.anywaydoor.entity.DuolabEntity;
 import xiaoshi2022.anywaydoor.regsiter.ModBlocks;
-
-import java.util.List;
 
 public final class DimensionalDoorTeleporter {
 

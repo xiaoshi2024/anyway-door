@@ -93,5 +93,7 @@
 
   "entity.anyway-door.duolab.door_received": "ドラB夢がどこでもドアを受け取った！",
   "entity.anyway-door.duolab.want_dorayaki": "ドラB夢があなたのどら焼きをじっと見つめている...",
-  "entity.anyway-door.duolab.storing_in_progress": "§eドラB梦（ネタ）がしまっています、お待ちください..."
+  "entity.anyway-door.duolab.storing_in_progress": "§eドラB梦（ネタ）がしまっています、お待ちください...",
+  "item.anyway-door.xiaofu_mask": "スネ夫の仮面",
+  "itemGroup.anyway-door.main": "Anyway Door"
 }

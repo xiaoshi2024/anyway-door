@@ -9,7 +9,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -41,8 +40,6 @@ import xiaoshi2022.anywaydoor.entity.handler.PocketHandler;
 import xiaoshi2022.anywaydoor.regsiter.ModBlocks;
 import xiaoshi2022.anywaydoor.regsiter.ModEntities;
 import xiaoshi2022.anywaydoor.regsiter.ModItems;
-
-import java.util.List;
 
 public class DuolabEntity extends PathfinderMob implements GeoEntity {
 

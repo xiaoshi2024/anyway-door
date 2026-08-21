@@ -93,5 +93,7 @@
 
   "entity.anyway-door.duolab.door_received": "DuoLab received the Dimensional Door!",
   "entity.anyway-door.duolab.want_dorayaki": "DuoLab is staring at your dorayaki...",
-  "entity.anyway-door.duolab.storing_in_progress": "§eDuolab is storing something, please wait..."
+  "entity.anyway-door.duolab.storing_in_progress": "§eDuolab is storing something, please wait...",
+  "itemGroup.anyway-door.main": "Anyway Door",
+  "item.anyway-door.xiaofu_mask": "Xiaofu Mask"
 }

@@ -1,40 +1,37 @@
 package xiaoshi2022.anywaydoor.regsiter;
 
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import xiaoshi2022.anywaydoor.AnywayDoor;
 
 public class ModItemGroups {
 
-    public static final CreativeModeTab ANYWAY_DOOR_TAB = CreativeModeTab.builder(
-                    CreativeModeTab.Row.TOP,   // 第一行（TOP）或第二行（BOTTOM）
-                    CreativeModeTab.Type.CATEGORY.ordinal()  // CATEGORY 或 INVENTORY
-            )
-            .title(Component.translatable("itemGroup.anyway-door"))
-            .icon(() -> new ItemStack(ModBlocks.DIMENSIONAL_DOOR))
-            .displayItems((parameters, output) -> {
-                // ========== 添加所有物品到自定义物品栏 ==========
-                // 任意门方块
-                output.accept(ModBlocks.DIMENSIONAL_DOOR);
-                // 哆啦B梦刷怪蛋
-                output.accept(ModItems.DUOLAB_SPAWN_EGG);
-
-                output.accept(ModItems.DORAYAKI);
-            })
-            .build();
+    // 使用 ResourceKey 方式（更安全，推荐）
+    public static final ResourceKey<CreativeModeTab> ANYWAY_DOOR_TAB = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
+            ResourceLocation.fromNamespaceAndPath(AnywayDoor.MOD_ID, "main")
+    );
 
     public static void init() {
-        // 注册到 BuiltInRegistries
-        Registry.register(
-                BuiltInRegistries.CREATIVE_MODE_TAB,
-                ResourceLocation.fromNamespaceAndPath(AnywayDoor.MOD_ID, "anyway_door_tab"),
-                ANYWAY_DOOR_TAB
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ANYWAY_DOOR_TAB,
+                FabricItemGroup.builder()
+                        .title(Component.translatable("itemGroup.anyway-door.main"))
+                        .icon(() -> new ItemStack(ModBlocks.DIMENSIONAL_DOOR))
+                        .displayItems((context, entries) -> {
+                            // 添加所有物品
+                            entries.accept(ModItems.DIMENSIONAL_DOOR_ITEM);
+                            entries.accept(ModItems.DUOLAB_SPAWN_EGG);
+                            entries.accept(ModItems.DORAYAKI);
+                            entries.accept(ModItems.XIAOFU_MASK);
+                        })
+                        .build()
         );
     }
 }

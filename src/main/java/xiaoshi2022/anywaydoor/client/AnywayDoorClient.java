@@ -3,9 +3,9 @@ package xiaoshi2022.anywaydoor.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import xiaoshi2022.anywaydoor.client.renderer.block.DimensionalDoorRenderer;
 import xiaoshi2022.anywaydoor.client.renderer.entity.DuolabRenderer;
 import xiaoshi2022.anywaydoor.regsiter.ModBlockEntities;
-import xiaoshi2022.anywaydoor.client.renderer.block.DimensionalDoorRenderer;
 import xiaoshi2022.anywaydoor.regsiter.ModEntities;
 
 public class AnywayDoorClient implements ClientModInitializer {

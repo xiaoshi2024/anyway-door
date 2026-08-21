@@ -1,11 +1,8 @@
 package xiaoshi2022.anywaydoor.entity.handler;
 
 import net.minecraft.nbt.CompoundTag;  // ← 添加
-import net.minecraft.nbt.ListTag;     // ← 添加
-import net.minecraft.nbt.Tag;          // ← 添加
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;  // ← 添加
 import xiaoshi2022.anywaydoor.entity.DuolabEntity;
 import xiaoshi2022.anywaydoor.regsiter.ModItems;

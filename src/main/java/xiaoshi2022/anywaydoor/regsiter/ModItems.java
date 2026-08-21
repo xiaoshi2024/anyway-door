@@ -4,10 +4,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import xiaoshi2022.anywaydoor.AnywayDoor;
 import xiaoshi2022.anywaydoor.item.DuolabSpawnEggItem;
+import xiaoshi2022.anywaydoor.item.XiaofuMaskItem;
 
 public class ModItems {
 
@@ -28,6 +30,15 @@ public class ModItems {
                             .build()
                     )
                     .stacksTo(16)
+            )
+    );
+
+    public static final Item XIAOFU_MASK = register(
+            "xiaofu_mask",
+            new XiaofuMaskItem(
+                    ModArmorMaterials.XIAOFU_MASK,
+                    ArmorItem.Type.HELMET,
+                    new Item.Properties().stacksTo(1)
             )
     );
 

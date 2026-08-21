@@ -93,5 +93,7 @@
 
   "entity.anyway-door.duolab.door_received": "哆啦B梦收下了任意门！",
   "entity.anyway-door.duolab.want_dorayaki": "哆啦B梦眼巴巴地看着你手里的铜锣烧...",
-  "entity.anyway-door.duolab.storing_in_progress": "§e哆啦B梦正在存东西呢，请稍等..."
+  "entity.anyway-door.duolab.storing_in_progress": "§e哆啦B梦正在存东西呢，请稍等...",
+  "itemGroup.anyway-door.main": "任意门等",
+  "item.anyway-door.xiaofu_mask": "小夫面具"
 }
